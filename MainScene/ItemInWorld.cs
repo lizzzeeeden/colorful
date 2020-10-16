@@ -17,7 +17,7 @@ public class ItemInWorld : MonoBehaviour
 
     private void GetThisItem()
     {
-        if (playerData.GetBagItemCnt() >= 3 * 12) {
+        if (playerData.GetBagItemCnt() >= 3 * 12&& playerInventory.name!="BulletBag") {
             return;//之后记得加提示
         }
         playerInventory.itemList.Add(item);

@@ -11,11 +11,12 @@ public class PlayerBagManager : MonoBehaviour
 
     [Header("UI相关")]
     public GameObject slotPrefab;
-    public GameObject HPText;
+    public Text HPText;
+    public Text moneyText;
     public Image HPBarFill;
     public GameObject slotModle;
-    public GameObject nextButton;
-    public GameObject lastButton;
+    public Button nextButton;
+    public Button lastButton;
 
     [Header("玩家数据相关")]
     public PlayerData playerData;
@@ -47,15 +48,16 @@ public class PlayerBagManager : MonoBehaviour
     {
         itemGridCnt = 0;
         bFirstSelect = true;
-        lastButton.SetActive(false);//开始没有左键
+
+        //开始有右选择键没有左选择键
+        nextButton.gameObject.SetActive(true);
+        lastButton.gameObject.SetActive(false);
 
         ArrangeItem();
         FirstSelectItem();
 
-        ShowHP();
-        FillHPBar();
-
-        ShowBulletsNum();
+        ShowData();
+        ShowBullets();
     }
 
     void Update()
@@ -64,7 +66,18 @@ public class PlayerBagManager : MonoBehaviour
         ChangeItemInfoText();
     }
 
-    //把库中的东西展示在背包里，把具体物体附到slot上
+    private void OnDisable()
+    {
+        //关闭节点时清空介绍文本
+        transform.Find("ItemInfoBack").GetChild(0).GetComponent<Text>().text = "";
+
+        //背包回到第一页
+        itemGrid[0].gameObject.SetActive(true);
+        itemGrid[1].gameObject.SetActive(false);
+        itemGrid[2].gameObject.SetActive(false);
+    }
+
+    //把库中的东西展示在背包里，把具体物体附到slot上，打开时引用一次
     public void ArrangeItem()
     {
         //删除所有子物体
@@ -93,17 +106,7 @@ public class PlayerBagManager : MonoBehaviour
             }
         }
     }
-
-    private void OnDisable()
-    {
-        //关闭节点时清空介绍文本
-        transform.Find("ItemInfoBack").GetChild(0).GetComponent<Text>().text = "";
-
-        //背包回到第一页
-        itemGrid[0].gameObject.SetActive(true);
-        itemGrid[1].gameObject.SetActive(false);
-        itemGrid[2].gameObject.SetActive(false);
-    }
+    
 
     //开始选择物品
     private void FirstSelectItem()
@@ -115,14 +118,14 @@ public class PlayerBagManager : MonoBehaviour
         //方向键或wasd键选择
         if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
             //没有物品则选择换页键
-            if (transform.Find("ItemBack").GetChild(itemGridCnt).childCount == 0) {
-                if (lastButton.activeSelf) {
-                    lastButton.GetComponent<Button>().Select();
+            if (itemGrid[itemGridCnt].childCount == 0) {
+                if (lastButton.isActiveAndEnabled) {
+                    lastButton.Select();
                 } else {
-                    nextButton.GetComponent<Button>().Select();
+                    nextButton.Select();
                 }
             } else {
-                transform.Find("ItemBack").GetChild(itemGridCnt).GetChild(0).GetComponent<Button>().Select();
+                itemGrid[itemGridCnt].GetChild(0).GetComponent<Button>().Select();
                 bFirstSelect = false;
             }
         }
@@ -141,22 +144,22 @@ public class PlayerBagManager : MonoBehaviour
         }
     }
 
-    public void ShowHP()
+    public void ShowData()
     {
-        HPText.GetComponent<Text>().text = playerData.GetHP().ToString()
+        HPText.text = playerData.GetHP().ToString()
             + "/"
             + playerData.GetMaxHP().ToString();
-    }
 
-    //血条
-    public void FillHPBar()
-    {
+        moneyText.text = playerData.GetMoney().ToString();
+
+        //填充血条
         HPBarFill.fillAmount = (float)playerData.GetHP() / playerData.GetMaxHP();
+
     }
 
-    //显示（更新）子弹数量
-    public void ShowBulletsNum()
+    private void ShowBullets()
     {
+        //显示子弹数据
         int[] num = { 0, 0, 0, 0, 0, 0 };
         foreach (var item in playerBulletBag.itemList) {
             num[item.bBullet]++;
@@ -166,6 +169,7 @@ public class PlayerBagManager : MonoBehaviour
             bulletsText[i].text = num[i].ToString();
         }
     }
+
 
     public void FlipItemGrid(int n)
     {
@@ -178,16 +182,16 @@ public class PlayerBagManager : MonoBehaviour
         //到顶选择键消失，代码顺序注意
         switch (itemGridCnt) {
             case 0:
-                lastButton.SetActive(false);
-                nextButton.SetActive(true);
+                lastButton.gameObject.SetActive(false);
+                nextButton.gameObject.SetActive(true);
                 break;
             case 1:
-                lastButton.SetActive(true);
-                nextButton.SetActive(true);
+                lastButton.gameObject.SetActive(true);
+                nextButton.gameObject.SetActive(true);
                 break;
             case 2:
-                lastButton.SetActive(true);
-                nextButton.SetActive(false);
+                lastButton.gameObject.SetActive(true);
+                nextButton.gameObject.SetActive(false);
                 break;
         }
 
