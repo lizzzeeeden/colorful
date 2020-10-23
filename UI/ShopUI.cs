@@ -23,6 +23,7 @@ public class ShopUI : MonoBehaviour
     [Header("数据")]
     public InventorySO traderBag;
     public InventorySO playerBag;
+    public InventorySO playerBulletBag;
     public PlayerData playerData;
 
     public bool bFirstSelect;
@@ -37,22 +38,29 @@ public class ShopUI : MonoBehaviour
     private int itemGridNumP = 0;
     private List<Transform> itemGridP = new List<Transform>();
     private Transform itemBackP;
+    private Text[] bulletsText;
 
 
     void Awake()
     {
         itemBackT = transform.Find("Trader").Find("ItemBack");
         itemBackP = transform.Find("PlayerTrader").Find("ItemBack");
+        bulletsText = transform.Find("PlayerTrader").Find("DataBack")
+            .Find("BulletsData").GetComponentsInChildren<Text>();
     }
     void OnEnable()
     {
+        bFirstSelect = true;
         ArrangeItem();
+
+        ShowData();
+        ShowBullets();
     }
 
     void Update()
     {
         FirstSelectItem();
-        ChangeItemInfoText();
+        ChangeItemInfoText(false);
     }
 
     void OnDisable()
@@ -265,14 +273,14 @@ public class ShopUI : MonoBehaviour
     }
 
     //需要靠事件系统来检测被选中的物体，button里的select只是颜色过渡，就离谱
-    private void ChangeItemInfoText()
+    public void ChangeItemInfoText(bool bChangeNow)
     {
-        if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
+        if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical") || bChangeNow) {
             if (!EventSystem.current.currentSelectedGameObject
                 || !EventSystem.current.currentSelectedGameObject.GetComponent<Slot>()) {
                 return;
-            } else {
-                if (EventSystem.current.currentSelectedGameObject.transform.parent.parent.parent.name == "Trader") {
+            } else {//这里不用的文字框直接关了
+                if (EventSystem.current.currentSelectedGameObject.GetComponent<Slot>().bTraderItem) {
                     transform.Find("Trader").Find("ItemInfoBack").GetChild(0).gameObject.SetActive(true);
                     transform.Find("PlayerTrader").Find("ItemInfoBack").GetChild(0).gameObject.SetActive(false);
                 } else {
@@ -284,11 +292,6 @@ public class ShopUI : MonoBehaviour
         }
     }
 
-    public void ShowData()
-    {
-        moneyText.text = playerData.GetMoney().ToString();
-    }
-
     //开始选择物品
     private void FirstSelectItem()
     {
@@ -296,17 +299,20 @@ public class ShopUI : MonoBehaviour
             return;
         }
 
+        //消除所有选择状态，在slot的TradItem里做了
+        //if (EventSystem.current.currentSelectedGameObject != null && EventSystem.current.currentSelectedGameObject.GetComponent<Button>() != null) {
+        //    Button selectedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+        //    selectedButton.interactable = false;
+        //    selectedButton.interactable = true;
+        //}
+
         //方向键或wasd键选择
         if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical")) {
-            //没有物品则选择换页键
-            if (itemGridT[itemGridCntT].childCount == 0) {
-                if (lastButtonT.isActiveAndEnabled) {
-                    lastButtonT.Select();
-                } else {
-                    nextButtonT.Select();
-                }
-            } else {
+            if (itemGridT[0].childCount != 0) {
                 itemGridT[itemGridCntT].GetChild(0).GetComponent<Button>().Select();
+                bFirstSelect = false;
+            } else if (itemGridP[0].childCount != 0) {
+                itemGridP[itemGridCntP].GetChild(0).GetComponent<Button>().Select();
                 bFirstSelect = false;
             }
         }
@@ -379,5 +385,23 @@ public class ShopUI : MonoBehaviour
 
         bFirstSelect = true;
         FirstSelectItem();
+    }
+
+    //数据
+    public void ShowData()
+    {
+        moneyText.text = playerData.GetMoney().ToString();
+    }
+    public void ShowBullets()
+    {
+        //显示子弹数据
+        int[] num = new int[6];
+        foreach (var item in playerBulletBag.itemList) {
+            num[item.bBullet]++;
+        }
+
+        for (int i = 0; i < 6; i++) {
+            bulletsText[i].text = num[i].ToString();
+        }
     }
 }

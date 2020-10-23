@@ -10,16 +10,17 @@ public class FishEnemy : CB_Enemy
     private SpriteRenderer playerSpRender;
     private GameObject myCamera;
     private float speed;
+    private SpriteRenderer spriteRenderer;
     void Awake()
     {
         myCamera = GameObject.FindWithTag("MainCamera");
-        playerSpRender = gameObject.GetComponent<SpriteRenderer>();
+        playerSpRender = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         moveSpeed = Random.Range(1.0f, 7.0f);
         speed = 0;
 
         //初始化颜色
-        grayLevel = 0;
         IniGrayLevel();
 
         //初始化方向
@@ -44,21 +45,26 @@ public class FishEnemy : CB_Enemy
         playerSpRender.color = new Color32
             (grayValue[grayLevel], grayValue[grayLevel], grayValue[grayLevel], 255);
         InvokeRepeating("AddGrayLevel", darkenTime, darkenTime);
+        grayLevel = 0;
     }
 
     //变深
     private void AddGrayLevel()
     {
+        if (speed > 0) {//有速度了不用继续
+            return;
+        }
         if (grayLevel < 5) {
             grayLevel++;
-            playerSpRender.color = new Color32
-             (grayValue[grayLevel], grayValue[grayLevel], grayValue[grayLevel], 255);
+            
         } else {
             //到达最黑开始追逐主角，设定速度
             CancelInvoke();
             speed = moveSpeed;
         }
-
+        playerSpRender.color = new Color32
+            (grayValue[grayLevel], grayValue[grayLevel], grayValue[grayLevel], 255);
+        InvokeRepeating("AddGrayLevel", darkenTime, darkenTime);
     }
 
     //位置初始化
@@ -68,8 +74,8 @@ public class FishEnemy : CB_Enemy
 
         float cameraHeight = myCamera.GetComponent<Camera>().orthographicSize * 2;
         float cameraWidth = cameraHeight * Screen.width * 1.0f / Screen.height;
-        float blockSizeX = gameObject.GetComponent<Collider2D>().bounds.size.x;
-        float blockSizeY = gameObject.GetComponent<Collider2D>().bounds.size.y;
+        float blockSizeX = GetComponent<Collider2D>().bounds.size.x;
+        float blockSizeY = GetComponent<Collider2D>().bounds.size.y;
 
         float pzX = (float)Random.Range(-10, 11) / 20;
         float pzY = (float)Random.Range(-5, 6) / 10;

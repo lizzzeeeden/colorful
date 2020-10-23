@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class CB_Player : MonoBehaviour
 {
-    protected Rigidbody2D playerRb;
     public float speed;
+    public int grayLevel;
 
-    public float HP;
+    public PlayerData playerData;
+    public MonsterSO monsterData;
 
+    protected Rigidbody2D playerRb;
     protected readonly byte[] grayValue = { 255, 204, 153, 102, 51, 0 };
 
-
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         Move();
     }
@@ -27,15 +28,4 @@ public class CB_Player : MonoBehaviour
         playerRb.MovePosition(pz);
     }
 
-    //返回血量
-    public float GetPlayerHP()
-    {
-        return HP;
-    }
-
-    //血量减少
-    public void LoseHP(float a)
-    {
-        HP -= a;
-    }
 }

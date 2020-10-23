@@ -7,7 +7,6 @@ public class LimitedEnemy : CB_Enemy
     public float speed;
 
 
-
     void Awake()
     {
         //初始化颜色
@@ -21,7 +20,18 @@ public class LimitedEnemy : CB_Enemy
         Move();
     }
 
- 
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Bullet")) {
+            Bullet bullet = collision.GetComponent<Bullet>();
+            if (bullet.GetGrayLevel() > grayLevel) {
+                bullet.DestroyThis();
+                Destroy(gameObject);
+                monsterData.ChangeHP(-1);
+            } 
+        }
+    }
+
     //移动
     private void Move()
     {

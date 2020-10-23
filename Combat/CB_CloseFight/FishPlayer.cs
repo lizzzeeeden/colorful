@@ -4,31 +4,36 @@ using UnityEngine;
 
 public class FishPlayer : CB_Player
 {
-    public int grayLevel;
     public int levelUpInterval;
 
     private int fishCatchCnt;
     private SpriteRenderer playerSpRender;
+    private CB_Player playerSc;
 
     void Awake()
     {
-        playerRb = gameObject.GetComponent<Rigidbody2D>();
-        playerSpRender = gameObject.GetComponent<SpriteRenderer>();
+        playerRb = GetComponent<Rigidbody2D>();
+        playerSpRender = GetComponent<SpriteRenderer>();
+        playerSc = GetComponent<CB_Player>();
 
         grayLevel = 1;
         ChangeGrayLevel();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Enemy") {
-            if (collision.GetComponent<CB_Enemy>().GetGrayLevel() > grayLevel) {
-                LoseHP(1);
-                collision.GetComponent<CB_Enemy>().DestroyThis();
+        CB_Enemy enemy = collision.GetComponent<CB_Enemy>();
+
+            //颜色比它更深可以吃
+            if (enemy.GetGrayLevel() > grayLevel) {
+                playerData.ChangeHP(-1);
+                enemy.DestroyThis();
             } else {
                 fishCatchCnt++;
                 GrayLevelUP();
-                collision.GetComponent<CB_Enemy>().DestroyThis();
+                enemy.DestroyThis();
+                playerSc.monsterData.ChangeHP(-1);
             }
         }
     }

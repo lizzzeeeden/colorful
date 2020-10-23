@@ -5,26 +5,25 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float shootSpeed;
+    public InventorySO bulletBag;
+    private ItemSO item;
+    private int grayLevel;
 
     //public float rotateSpeed;//转位置用
     //private Vector3 endPosition;
     //private bool bRotateBegin;
 
     private SpriteRenderer bulletSpRender;
-    private readonly byte[] grayValue = { 255, 204, 153, 102, 51, 0 };//从白到黑六个灰度等级
-    private int grayLevel;
     private bool bShoot;
-
+    private readonly byte[] grayValue = { 255, 204, 153, 102, 51, 0 };
 
     void Awake()
     {
-        grayLevel = Random.Range(1, 6);
-        bulletSpRender = gameObject.GetComponent<SpriteRenderer>();
+        GetComponent<Collider2D>().enabled=false;//主要使ring模式直接碰到怪不会消失
+        //grayLevel = Random.Range(1, 6);
+        bulletSpRender = GetComponent<SpriteRenderer>();
         bShoot = false;
         //bRotateBegin = false;
-
-        ChangeGrayLevel(grayLevel);
-
     }
 
     void Update()
@@ -36,21 +35,9 @@ public class Bullet : MonoBehaviour
     //{
     //    ChangeSeat();
     //}
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Enemy") {
-            CB_Enemy enemy = collision.GetComponent<CB_Enemy>();
-                if (enemy.GetGrayLevel() < grayLevel) {
-                    enemy.DestroyThis();
-                    Destroy(gameObject);
-                }
-        }
-    }
 
-
-    public void ChangeGrayLevel(int gl)
+    public void IniGrayLevel()
     {
-        grayLevel = gl;
         bulletSpRender.color = new Color32
             (grayValue[grayLevel], grayValue[grayLevel], grayValue[grayLevel], 255);
     }
@@ -59,17 +46,26 @@ public class Bullet : MonoBehaviour
     {
         return grayLevel;
     }
+    public void SetGrayLevel(int i)
+    {
+        grayLevel = i;
+    }
 
-    public void DestroyBullet()
+    public void SetItem(ItemSO i)
+    {
+        item = i;
+    }
+    public void DestroyThis()
     {
         Destroy(gameObject);
     }
 
-    //发射子弹
+    //发射子弹的前设
     public void Shoot()
     {
         bShoot = true;
-        gameObject.GetComponent<Collider2D>().enabled=true;
+        GetComponent<Collider2D>().enabled=true;
+        bulletBag.GetList().Remove(item);
     }
 
     private void Move()

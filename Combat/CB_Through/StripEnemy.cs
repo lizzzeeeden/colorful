@@ -11,7 +11,7 @@ public class StripEnemy : CB_Enemy
     void Awake()
     {
         //初始化颜色
-        grayLevel = Random.Range(0, 6);
+        grayLevel = Random.Range(0, 6);//0-5等级
         IniGrayLevel();
 
         myCamera = GameObject.FindWithTag("MainCamera");

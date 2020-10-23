@@ -18,7 +18,6 @@ public class BlockEnemy : CB_Enemy
         myCamera = GameObject.FindWithTag("MainCamera");
         birthDirection = (direction)Random.Range(0, 4);
         SetBirthPosition();
-        IniGrayLevel();
     }
 
     // Update is called once per frame

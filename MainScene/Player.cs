@@ -24,6 +24,14 @@ public class Player : MonoBehaviour
         anim = gameObject.GetComponent<Animator>();
     }
 
+    void OnEnable()
+    {
+        if (playerData.GetPosition() != Vector3.zero) {
+            transform.position = Vector3.zero;
+        }
+        playerData.SetPosition(Vector3.zero);
+    }
+
     void FixedUpdate()
     {
         Move();

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    public GameObject dialogUI;
+
     public SingleUI bagUI;
     public SingleUI pauseUI;
     public Player player;
@@ -14,25 +16,26 @@ public class UIManager : MonoBehaviour
         OpenBag();
         OpenPauseUI();
     }
+
+    //打开背包
     private void OpenBag()
     {
         if (Input.GetKeyDown(KeyCode.E)) {
-            if (!bagUI.isActiveAndEnabled) {
+            if (!bagUI.isActiveAndEnabled && !dialogUI.activeSelf) {
                 bagUI.gameObject.SetActive(true);
-                player.SetPlayerMobility(false);
             } else {
                 bagUI.gameObject.SetActive(false);
-                player.SetPlayerMobility(true);
             }
         }
     }
+
+    //暂停界面
     private void OpenPauseUI()
     {
         if (Input.GetKeyDown(KeyCode.Escape)
-            &&!bagUI.isActiveAndEnabled
-            && !pauseUI.isActiveAndEnabled) {         
-                pauseUI.gameObject.SetActive(true);
-                player.SetPlayerMobility(false);
+            && !bagUI.isActiveAndEnabled
+            && !pauseUI.isActiveAndEnabled) {
+            pauseUI.gameObject.SetActive(true);
         }
     }
 }

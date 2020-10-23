@@ -4,24 +4,34 @@ using UnityEngine;
 
 public class RingManager : CB_Manager
 {
-    public GameObject bullet;
+    public InventorySO bulletBag;
+    public GameObject bulletPrefab;
     public GameObject player;
-    public int bulletNum;
 
+    private List<ItemSO> bullets;
     private void Awake()
     {
-        enemyCnt = 0;
+        bullets = bulletBag.GetList();
+        //enemyCnt = 0;
         CreateBullet();
         InvokeRepeating("CreateEnemy", 0f, intervalTime);
     }
 
 
-    //生成子弹，因为RingPlayer上有刚体，会先加载好，如果先设置active的话，那边的bullets取不到预制体实例
+    //生成子弹
     private void CreateBullet()
     {
-        for (int i = 0; i < bulletNum; i++) {
-            Instantiate(bullet, player.transform);
+        foreach (var item in bullets) {
+            if (item.bBullet == 0) {//吉祥物不生成
+                continue;
+            }
+            GameObject bullet = Instantiate(bulletPrefab, player.transform);
+            Bullet bulletSc = bullet.GetComponent<Bullet>();
+            bulletSc.SetGrayLevel(item.bBullet);
+            bulletSc.IniGrayLevel();
+            bulletSc.SetItem(item);
         }
-        player.SetActive(true);
+        //因为RingPlayer上有刚体，会先加载好，如果先设置active的话，那边的bullets取不到预制体实例
+        //player.SetActive(true);
     }
 }

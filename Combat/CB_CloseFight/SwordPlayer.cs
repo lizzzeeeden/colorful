@@ -10,13 +10,13 @@ public class SwordPlayer : CB_Player
 
     void Awake()
     {
-        playerRb = gameObject.GetComponent<Rigidbody2D>();
-        coll = gameObject. GetComponent<Collider2D>();
+        playerRb = GetComponent<Rigidbody2D>();
+        coll = GetComponent<Collider2D>();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (coll.tag=="Player"&&collision.tag == "Enemy") {
-            LoseHP(1);
+            playerData.ChangeHP(-1);
         }
     }
 

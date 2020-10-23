@@ -7,9 +7,6 @@ public class RingEnemy : CB_Enemy
     public float speed;
 
     private GameObject myCamera;
-
-
-
     void Awake()
     {
         myCamera = GameObject.FindWithTag("MainCamera");
@@ -25,6 +22,20 @@ public class RingEnemy : CB_Enemy
     void Update()
     {
         Move();
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Bullet")) {
+            Bullet bullet = collision.GetComponent<Bullet>();
+            if (bullet.GetGrayLevel() > grayLevel) {
+                bullet.DestroyThis();
+                Destroy(gameObject);
+                monsterData.ChangeHP(-1);
+            }
+        }else if (collision.CompareTag("Player")) {
+
+        }
     }
 
     //初始位置

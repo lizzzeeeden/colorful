@@ -24,8 +24,6 @@ public class LimitedLayout : MonoBehaviour
         iniPosition = transform.position;
         //rotateCenter = new Vector3(0, -cameraHeight / 2, 0);
 
-        AmendChildCnt();
-        ArrangeLayout();
     }
 
     void Update()
@@ -37,7 +35,7 @@ public class LimitedLayout : MonoBehaviour
 
 
     //修正子弹数量
-    private void AmendChildCnt()
+    public void AmendChildCnt()
     {
         Transform[] bulletsTmp = transform.GetComponentsInChildren<Transform>();
         bullets = new List<Transform>();
@@ -54,7 +52,7 @@ public class LimitedLayout : MonoBehaviour
 
     //整理布局，确定子弹位置
     //数学不好不要硬学编程，太快乐了
-    private void ArrangeLayout()
+    public void ArrangeLayout()
     {
         float radius = cameraHeight / 2 - (-iniPosition.y);
         float angle = 180f / (bullets.Count + 1) / 180f * Mathf.PI;//转换为弧度

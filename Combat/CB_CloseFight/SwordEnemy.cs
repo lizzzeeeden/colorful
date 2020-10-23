@@ -16,7 +16,6 @@ public class SwordEnemy : CB_Enemy
 
         myCamera = GameObject.FindWithTag("MainCamera");
         SetBirthPosition();
-        IniGrayLevel();
     }
 
     // Update is called once per frame

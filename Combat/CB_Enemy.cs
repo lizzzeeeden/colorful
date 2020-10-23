@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CB_Enemy : MonoBehaviour
 {
+    public MonsterSO monsterData;
+
     public int grayLevel;
     protected readonly byte[] grayValue = { 255, 204, 153, 102, 51, 0 };//从白到黑六个灰度等级
 

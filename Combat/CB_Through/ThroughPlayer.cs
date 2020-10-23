@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class ThroughPlayer : CB_Player
 {
-    public int grayLevel;
-
     private SpriteRenderer playerSpRender;
+    protected CB_Player playerSc;
     // Start is called before the first frame update
     void Awake()
     {
-        playerRb = gameObject.GetComponent<Rigidbody2D>();
-        playerSpRender = gameObject.GetComponent<SpriteRenderer>();
+        playerRb = GetComponent<Rigidbody2D>();
+        playerSpRender = GetComponent<SpriteRenderer>();
         grayLevel = 0;
+        playerSc = GetComponent<CB_Player>();
     }
 
     void Update()
@@ -20,11 +20,15 @@ public class ThroughPlayer : CB_Player
         ChangeGrayLevel();
     }
 
+
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy"
-            && collision.GetComponent<CB_Enemy>().GetGrayLevel() != grayLevel) {
-            LoseHP(1);
+        if (collision.tag == "Enemy") {
+            if (collision.GetComponent<CB_Enemy>().GetGrayLevel() != grayLevel) {
+                playerData.ChangeHP(-1);
+            } else {
+                playerSc.monsterData.ChangeHP(-1);
+            }
         } 
     }
 

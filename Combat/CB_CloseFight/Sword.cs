@@ -9,30 +9,35 @@ public class Sword : MonoBehaviour
     public int rotateDirection;
 
     private Transform player;
+    private CB_Player playerSc;
     private SpriteRenderer spRender;
     private readonly byte[] grayValue = { 255, 204, 153, 102, 51, 0 };//从白到黑六个灰度等级
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        CB_Enemy enemy = collision.GetComponent<CB_Enemy>();
-        if (collision.tag == "Enemy") {
-
-            //修补子物体让父物体的trigger扩大
-            //妈的到底为什么要这样设计，到底怎么分开
-            player.gameObject.GetComponent<CB_Player>().LoseHP(-1);//修复，加血抵消
-
-            if (enemy.GetGrayLevel() == grayLevel) {
-                enemy.DestroyThis();
-            }
-        }
-    }
     void Awake()
     {
         spRender = gameObject.GetComponent<SpriteRenderer>();
         player = transform.parent;
+        playerSc = player.GetComponent<CB_Player>();
 
         rotateDirection = 1;
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Enemy") {
+            CB_Enemy enemy = collision.GetComponent<CB_Enemy>();
+
+            //修补子物体让父物体的trigger扩大
+            //妈的到底为什么要这样设计，到底怎么分开
+            playerSc.playerData.ChangeHP(1);//修复，加血抵消
+
+            if (enemy.GetGrayLevel() == grayLevel) {
+                enemy.DestroyThis();
+                playerSc.monsterData.ChangeHP(-1);
+            }
+        }
+    }
+   
     // Update is called once per frame
     void Update()
     {
